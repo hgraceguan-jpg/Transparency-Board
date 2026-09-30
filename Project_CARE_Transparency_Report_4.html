@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project C.A.R.E.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── THEME VARIABLES (single dark-first design, committed look) ──────────── */
+:root{
+  color-scheme: dark;
+  --red:#E63946;     --red-g:rgba(230,57,70,0.13);   --red-b:rgba(230,57,70,0.30);
+  --blue:#3B82F6;    --blue-g:rgba(59,130,246,0.12);  --blue-b:rgba(59,130,246,0.28);
+  --green:#10B981;   --green-g:rgba(16,185,129,0.12); --green-b:rgba(16,185,129,0.28);
+  --amber:#F59E0B;   --amber-g:rgba(245,158,11,0.12); --amber-b:rgba(245,158,11,0.28);
+  --cyan:#22D3EE;    --purple:#A78BFA;
+  --bg:#060A14; --bg2:#0C1220; --bg3:#111827; --bg4:#1A2332;
+  --text:#F0F6FF; --muted:rgba(240,246,255,0.52); --muted2:rgba(240,246,255,0.28);
+  --border:rgba(59,130,246,0.10); --bm:rgba(59,130,246,0.22);
+  --card:rgba(12,18,32,0.95); --nav-bg:rgba(6,10,20,0.92);
+}
+
+/* ── BASE ───────────────────────────────────────────────────────────────── */
+html,body{min-height:100%;font-family:Outfit,sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+body{overflow-x:hidden}
+
+/* ── BACKGROUND LAYERS ──────────────────────────────────────────────────── */
+.bg-mesh{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 10%, rgba(230,57,70,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 5%,  rgba(59,130,246,0.10) 0%,transparent 55%),
+    radial-gradient(ellipse 70% 60% at 50% 100%,rgba(16,185,129,0.06) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 80% 60%, rgba(245,158,11,0.05) 0%,transparent 50%);
+  animation:meshPulse 20s ease-in-out infinite}
+@keyframes meshPulse{0%,100%{opacity:1}50%{opacity:.65}}
+
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(59,130,246,0.025) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(59,130,246,0.025) 1px,transparent 1px);
+  background-size:52px 52px}
+
+.particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.pt{position:absolute;border-radius:50%;animation:ptUp 14s linear infinite}
+@keyframes ptUp{
+  0%  {transform:translateY(100vh) translateX(0);opacity:0}
+  6%  {opacity:.45}
+  94% {opacity:.45}
+  100%{transform:translateY(-8vh) translateX(20px);opacity:0}
+}
+
+/* ── TOP PROGRESS BAR ───────────────────────────────────────────────────── */
+.pbar{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(59,130,246,0.08);z-index:10000}
+.pfill{height:100%;background:linear-gradient(90deg,var(--red),var(--amber),var(--green));width:0;border-radius:0 2px 2px 0}
+
+/* ── TOP NAV ────────────────────────────────────────────────────────────── */
+.topbar{
+  position:fixed;top:3px;left:0;right:0;height:60px;
+  background:var(--nav-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bm);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;z-index:9999;
+}
+.tb-brand{display:flex;align-items:center;gap:10px}
+.tb-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(0.9)}}
+.tb-name{font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:2px;color:var(--text)}
+.tb-name span{color:var(--amber)}
+.tb-date{font-size:11px;color:var(--muted);font-weight:500}
+
+/* ── HERO ───────────────────────────────────────────────────────────────── */
+.hero{
+  position:relative;z-index:2;
+  padding:100px 24px 0;
+  text-align:center;
+  background:linear-gradient(180deg, rgba(230,57,70,0.04) 0%, transparent 60%);
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--red-g);border:1px solid var(--red-b);border-radius:24px;
+  padding:6px 18px;font-size:11px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--red);margin-bottom:18px;
+}
+.hero h1{
+  font-family:"Bebas Neue",sans-serif;
+  font-size:clamp(52px,10vw,96px);
+  letter-spacing:6px;line-height:1;
+  background:linear-gradient(135deg,#fff 0%,var(--amber) 50%,var(--red) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:6px;
+}
+.hero-sub{font-size:13px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:32px;}
+
+/* ── TAB BAR ────────────────────────────────────────────────────────────── */
+.tab-bar{
+  display:inline-flex;align-items:center;
+  background:var(--bg2);border:1px solid var(--bm);border-radius:14px;
+  padding:5px;gap:4px;margin-bottom:0;position:relative;z-index:2;
+}
+.tab-btn{
+  background:transparent;border:1px solid transparent;border-radius:10px;
+  color:var(--muted);font-size:12px;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;padding:10px 22px;cursor:pointer;
+  font-family:Outfit,sans-serif;transition:all .25s;
+  display:flex;align-items:center;gap:7px;white-space:nowrap;
+}
+.tab-btn:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.tab-btn.active{
+  background:var(--bg3);color:var(--text);
+  border-color:var(--bm);
+  box-shadow:0 0 16px rgba(59,130,246,0.15);
+}
+.tab-btn.active[data-tab="overview"]  {border-color:var(--blue-b);  box-shadow:0 0 20px rgba(59,130,246,0.2);}
+.tab-btn.active[data-tab="season1"]   {border-color:var(--amber-b); box-shadow:0 0 20px rgba(245,158,11,0.2);}
+.tab-btn.active[data-tab="season2"]   {border-color:var(--green-b); box-shadow:0 0 20px rgba(16,185,129,0.2);}
+.tab-btn.active[data-tab="accountability"]{border-color:var(--red-b); box-shadow:0 0 20px rgba(230,57,70,0.2);}
+.tab-icon{font-size:15px}
+
+.hero-tabs-wrap{padding:28px 24px 0;display:flex;justify-content:center}
+
+/* ── PANELS ─────────────────────────────────────────────────────────────── */
+.panel{display:none;position:relative;z-index:2;max-width:1080px;margin:0 auto;padding:40px 24px 80px}
+.panel.active{display:block;animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION TITLE ──────────────────────────────────────────────────────── */
+.sec-title{
+  font-family:"Bebas Neue",sans-serif;
+  font-size:clamp(28px,4vw,40px);letter-spacing:3px;
+  margin-bottom:4px;
+}
+.sec-title.red   {color:var(--red)}
+.sec-title.amber {color:var(--amber)}
+.sec-title.green {color:var(--green)}
+.sec-title.blue  {color:var(--blue)}
+.sec-sub{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:28px;}
+
+/* ── REMAINING HERO ─────────────────────────────────────────────────────── */
+.rem-hero{
+  background:var(--card);border:1px solid var(--green-b);border-radius:20px;
+  padding:32px 36px;margin-bottom:24px;
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  position:relative;overflow:hidden;
+  box-shadow:0 0 40px rgba(16,185,129,0.08),inset 0 1px 0 rgba(16,185,129,0.15);
+}
+.rem-hero::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+}
+.rem-hero::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 0% 50%,rgba(16,185,129,0.05) 0%,transparent 70%);
+  pointer-events:none;
+}
+.rem-hero-left .eyebrow{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.rem-hero-left .big-num{
+  font-family:"Bebas Neue",sans-serif;
+  font-size:clamp(48px,7vw,80px);line-height:1;letter-spacing:2px;
+  color:var(--text);
+  text-shadow:0 0 40px rgba(16,185,129,0.3);
+}
+.rem-hero-left .big-num .currency{font-size:40%;vertical-align:super;color:var(--green)}
+.rem-hero-left p{font-size:12px;color:var(--muted);margin-top:8px;max-width:380px}
+.rem-stats{display:flex;gap:12px;flex-shrink:0;flex-wrap:wrap}
+.rs{
+  background:rgba(255,255,255,0.04);border:1px solid var(--bm);border-radius:12px;
+  padding:14px 18px;text-align:center;min-width:90px;
+}
+.rs-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.rs-val{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:1px;color:var(--text)}
+.rs-val.dim{color:var(--muted);font-size:18px}
+.rs-val.red{color:var(--red)}
+.rs-val.amber{color:var(--amber)}
+
+/* ── GLASS CARD ─────────────────────────────────────────────────────────── */
+.glass{
+  background:var(--card);border:1px solid var(--bm);border-radius:16px;
+  padding:24px 26px;margin-bottom:20px;position:relative;overflow:hidden;
+}
+.glass::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--red),var(--amber))}
+.glass.blue-top::before{background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.glass.green-top::before{background:linear-gradient(90deg,var(--green),var(--cyan))}
+.glass.amber-top::before{background:linear-gradient(90deg,var(--amber),var(--red))}
+.glass.purple-top::before{background:linear-gradient(90deg,var(--purple),var(--blue))}
+.glass-title{
+  font-family:"Bebas Neue",sans-serif;font-size:18px;letter-spacing:2px;
+  color:var(--text);margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.eyebrow{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--amber);margin-bottom:4px}
+
+/* ── KPI GRID ───────────────────────────────────────────────────────────── */
+.kpi-grid{display:grid;gap:12px;margin-bottom:20px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g6{grid-template-columns:repeat(6,1fr)}
+
+.kpi{
+  background:var(--card);border:1px solid var(--bm);border-radius:14px;
+  padding:18px 20px;position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+}
+.kpi:hover{transform:translateY(-2px)}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.k-green::before{background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:0 0 8px var(--green)}
+.kpi.k-blue::before {background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.kpi.k-red::before  {background:linear-gradient(90deg,var(--red),var(--amber))}
+.kpi.k-amber::before{background:linear-gradient(90deg,var(--amber),var(--red))}
+.kpi.k-purple::before{background:linear-gradient(90deg,var(--purple),var(--blue))}
+.kpi:hover.k-green{box-shadow:0 8px 30px rgba(16,185,129,0.12)}
+.kpi:hover.k-blue {box-shadow:0 8px 30px rgba(59,130,246,0.12)}
+.kpi:hover.k-red  {box-shadow:0 8px 30px rgba(230,57,70,0.12)}
+.kpi:hover.k-amber{box-shadow:0 8px 30px rgba(245,158,11,0.12)}
+.kpi-lbl{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.kpi-val{
+  font-family:"Bebas Neue",sans-serif;font-size:28px;letter-spacing:1px;
+  color:var(--text);line-height:1;
+}
+.kpi-val.green {color:var(--green);text-shadow:0 0 20px rgba(16,185,129,0.35)}
+.kpi-val.blue  {color:var(--blue); text-shadow:0 0 20px rgba(59,130,246,0.35)}
+.kpi-val.red   {color:var(--red);  text-shadow:0 0 20px rgba(230,57,70,0.35)}
+.kpi-val.amber {color:var(--amber);text-shadow:0 0 20px rgba(245,158,11,0.35)}
+.kpi-val.purple{color:var(--purple)}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ── TABLES ─────────────────────────────────────────────────────────────── */
+.tbl-wrap{border-radius:12px;overflow:hidden;border:1px solid var(--bm);margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{background:var(--bg3);border-bottom:1px solid var(--bm)}
+thead th{
+  color:var(--muted);padding:11px 14px;text-align:left;
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;white-space:nowrap;
+}
+.th-r{text-align:right}.th-c{text-align:center}
+tbody tr{border-bottom:1px solid rgba(59,130,246,0.06);transition:background .15s}
+tbody tr:hover{background:rgba(255,255,255,0.03)}
+tbody tr:last-child{border-bottom:none}
+tbody td{padding:11px 14px;vertical-align:middle;color:var(--text)}
+.td-r{text-align:right;font-variant-numeric:tabular-nums}
+.td-c{text-align:center}
+.td-b{font-weight:700}
+.td-green{color:var(--green);font-weight:700}
+.td-red  {color:var(--red)}
+.td-amber{color:var(--amber);font-weight:600}
+.td-blue {color:var(--blue)}
+.td-muted{color:var(--muted)}
+tfoot tr{background:rgba(16,185,129,0.08);border-top:1px solid var(--green-b)}
+tfoot td{padding:12px 14px;font-weight:700;font-size:13px;color:var(--green)}
+.tbl-lbl{
+  font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--amber);margin-bottom:8px;display:flex;align-items:center;gap:6px;
+}
+.hl-row td{color:var(--amber) !important;font-weight:700}
+.hl-row{background:rgba(245,158,11,0.06) !important}
+
+/* ── PROGRESS BARS ──────────────────────────────────────────────────────── */
+.prog-item{margin-bottom:14px}
+.prog-label{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px;font-weight:600}
+.prog-label .lbl{color:var(--text)}
+.prog-label .pct{color:var(--muted);font-size:11px}
+.prog-bar{height:8px;background:rgba(255,255,255,0.06);border-radius:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:6px;width:0;transition:width 1.2s cubic-bezier(.25,.46,.45,.94)}
+.pf-green {background:linear-gradient(90deg,var(--green),var(--cyan));box-shadow:0 0 8px rgba(16,185,129,0.5)}
+.pf-blue  {background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.pf-red   {background:linear-gradient(90deg,var(--red),var(--amber))}
+.pf-amber {background:linear-gradient(90deg,var(--amber),#FCD34D)}
+.pf-purple{background:linear-gradient(90deg,var(--purple),var(--blue))}
+
+/* ── CALLOUTS ───────────────────────────────────────────────────────────── */
+.callout{
+  border-radius:12px;padding:16px 20px;margin-bottom:16px;
+  display:flex;gap:12px;align-items:flex-start;
+  border:1px solid;
+}
+.c-green{background:var(--green-g);border-color:var(--green-b)}
+.c-blue {background:var(--blue-g); border-color:var(--blue-b)}
+.c-amber{background:var(--amber-g);border-color:var(--amber-b)}
+.c-red  {background:var(--red-g);  border-color:var(--red-b)}
+.callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.callout h4{font-size:13px;font-weight:700;margin-bottom:3px}
+.callout p {font-size:12px;color:var(--muted);line-height:1.55}
+.c-green h4{color:var(--green)}
+.c-blue  h4{color:var(--blue)}
+.c-amber h4{color:var(--amber)}
+.c-red   h4{color:var(--red)}
+
+/* ── COMPARE CARD ───────────────────────────────────────────────────────── */
+.cmp-card{background:var(--card);border:1px solid var(--bm);border-radius:14px;overflow:hidden}
+.cmp-hdr{padding:13px 18px;font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:2px;
+  display:flex;align-items:center;gap:8px;}
+.cmp-hdr.amber{background:rgba(245,158,11,0.1);border-bottom:1px solid var(--amber-b);color:var(--amber)}
+.cmp-hdr.green{background:rgba(16,185,129,0.1);border-bottom:1px solid var(--green-b);color:var(--green)}
+.cmp-body{padding:16px 18px}
+.cmp-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px}
+.cmp-row:last-child{border-bottom:none;font-weight:700;padding-top:10px}
+.cmp-k{color:var(--muted)}
+.cmp-v{font-weight:600;color:var(--text)}
+.cmp-v.green{color:var(--green);text-shadow:0 0 12px rgba(16,185,129,0.35)}
+.cmp-v.red  {color:var(--red)}
+.cmp-v.amber{color:var(--amber)}
+.cmp-v.big  {font-family:"Bebas Neue",sans-serif;font-size:20px;letter-spacing:1px}
+
+/* ── SAVINGS BLOCK ──────────────────────────────────────────────────────── */
+.savings-block{
+  background:var(--amber-g);border:1px solid var(--amber-b);border-radius:16px;
+  padding:24px 26px;margin-bottom:20px;
+}
+.savings-total{
+  background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(16,185,129,0.05));
+  border:1px solid var(--green-b);border-radius:10px;
+  padding:16px 22px;margin-top:16px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 0 20px rgba(16,185,129,0.1);
+}
+.savings-total .st-label{font-family:"Bebas Neue",sans-serif;font-size:15px;letter-spacing:2px;color:var(--text)}
+.savings-total .st-val{font-family:"Bebas Neue",sans-serif;font-size:30px;letter-spacing:1px;color:var(--green);text-shadow:0 0 20px rgba(16,185,129,0.5)}
+
+/* ── PILLS ──────────────────────────────────────────────────────────────── */
+.pill{display:inline-block;border-radius:20px;padding:3px 10px;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border:1px solid}
+.p-green{background:var(--green-g);border-color:var(--green-b);color:var(--green)}
+.p-amber{background:var(--amber-g);border-color:var(--amber-b);color:var(--amber)}
+.p-red  {background:var(--red-g);  border-color:var(--red-b);  color:var(--red)}
+.p-blue {background:var(--blue-g); border-color:var(--blue-b); color:var(--blue)}
+
+/* ── LAYOUT UTILS ───────────────────────────────────────────────────────── */
+.two-col  {display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.mt16{margin-top:16px}.mt24{margin-top:24px}
+
+/* ── FUND STATUS TABLE (Accountability) ─────────────────────────────────── */
+.fund-total-box{
+  background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.04));
+  border:1px solid var(--green-b);border-radius:14px;
+  padding:24px 28px;text-align:center;
+  box-shadow:0 0 40px rgba(16,185,129,0.1);
+}
+.fund-total-box .ft-lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+.fund-total-box .ft-val{font-family:"Bebas Neue",sans-serif;font-size:56px;letter-spacing:3px;color:var(--text);text-shadow:0 0 40px rgba(16,185,129,0.4);line-height:1}
+.fund-total-box .ft-sub{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* ── FOOTER ─────────────────────────────────────────────────────────────── */
+.site-footer{
+  position:relative;z-index:2;
+  border-top:1px solid var(--bm);
+  background:var(--bg2);
+  padding:40px 24px;text-align:center;
+}
+.site-footer h3{font-family:"Bebas Neue",sans-serif;font-size:22px;letter-spacing:3px;color:var(--text);margin-bottom:8px}
+.site-footer p{font-size:12px;color:var(--muted);max-width:560px;margin:0 auto 4px;line-height:1.6}
+.footer-seal{
+  display:inline-block;margin-top:18px;padding:7px 18px;
+  border:1px solid var(--bm);border-radius:7px;
+  font-size:11px;color:var(--muted2);
+}
+
+/* ── ANIMATED COUNTER ───────────────────────────────────────────────────── */
+.counter{display:inline}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media(max-width:768px){
+  .g4,.g6{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .two-col,.three-col{grid-template-columns:1fr}
+  .rem-hero{flex-direction:column;text-align:center}
+  .rem-hero-left p{max-width:100%}
+  .rem-stats{justify-content:center}
+  .tab-btn{padding:9px 14px;font-size:11px}
+  .tab-btn span.tab-label{display:none}
+  .hero h1{font-size:clamp(42px,12vw,72px)}
+}
+@media print{
+  .pbar,.topbar,.tab-bar,.particles,.bg-mesh,.bg-grid{display:none}
+  .panel{display:block!important;padding:20px}
+  body{background:#fff;color:#000}
+}
+</style>
+
+
+</head>
+<body>
+<!-- Background -->
+<div class="bg-mesh"></div>
+<div class="bg-grid"></div>
+<div class="particles" id="particles"></div>
+
+<!-- Progress bar -->
+<div class="pbar"><div class="pfill" id="pfill"></div></div>
+
+<!-- ═══ TOPBAR ═══════════════════════════════════════════════════════════════ -->
+<nav class="topbar">
+  <div class="tb-brand">
+    <div class="tb-dot"></div>
+    <div>
+      <div class="tb-name">Project <span>C.A.R.E.</span></div>
+      <div class="tb-date">Transparency Report · Updated September 30, 2026</div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-badge">Financial Transparency Report 2026</div>
+  <h1>Project C.A.R.E.</h1>
+  <p class="hero-sub">Community · Accountability · Responsibility · Empowerment &nbsp;|&nbsp; Wellness Run 2026 &nbsp;|&nbsp; ICC/API/KTI/DBT</p>
+</div>
+
+<!-- Tab bar -->
+<div class="hero-tabs-wrap">
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="overview"       onclick="showTab('overview',this)">
+      <span class="tab-icon">📊</span><span class="tab-label">Overview</span>
+    </button>
+    <button class="tab-btn" data-tab="season1"         onclick="showTab('season1',this)">
+      <span class="tab-icon">🏃</span><span class="tab-label">Season 1</span>
+    </button>
+    <button class="tab-btn" data-tab="season2"         onclick="showTab('season2',this)">
+      <span class="tab-icon">🚴</span><span class="tab-label">Season 2</span>
+    </button>
+    <button class="tab-btn" data-tab="accountability" onclick="showTab('accountability',this)">
+      <span class="tab-icon">🔍</span><span class="tab-label">Accountability</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══ PANELS ════════════════════════════════════════════════════════════════ -->
+
+<!-- ── OVERVIEW ───────────────────────────────────────────────────────────── -->
+<div id="tab-overview" class="panel active">
+
+  <div class="sec-title blue">Program Overview</div>
+  <p class="sec-sub">Both Seasons Combined · As of June 16, 2026</p>
+
+  <!-- Dual remaining heroes -->
+  <div class="two-col" style="margin-bottom:16px">
+    <!-- Season 1 — net remaining -->
+    <div class="rem-hero" style="flex-direction:column;align-items:flex-start;gap:16px">
+      <div class="rem-hero-left" style="width:100%">
+        <div class="eyebrow">🏃 Season 1 — Net Remaining Balance</div>
+        <div class="big-num"><span class="currency">₱</span><span class="counter" data-target="33794">0</span></div>
+        <p style="margin-top:6px">Collected ₱48,300 <span style="color:var(--red)">− Expenses ₱14,506</span> = <strong style="color:var(--green)">₱33,794</strong><br>All expenses already paid. This is the true net balance.</p>
+      </div>
+      <div class="rem-stats" style="flex-direction:row">
+        <div class="rs"><div class="rs-lbl">Collected</div><div class="rs-val dim">₱48,300</div></div>
+        <div class="rs"><div class="rs-lbl">Spent</div><div class="rs-val red">₱14,506</div></div>
+        <div class="rs"><div class="rs-lbl">Outstanding</div><div class="rs-val amber">₱1,200</div></div>
+      </div>
+    </div>
+    <!-- Season 2 — net remaining -->
+    <div class="rem-hero" style="flex-direction:column;align-items:flex-start;gap:16px;border-color:var(--green-b)">
+      <div class="rem-hero-left" style="width:100%">
+        <div class="eyebrow">✅ Season 2 — Net Remaining Balance</div>
+        <div class="big-num"><span class="currency">₱</span><span class="counter" data-target="24593">0</span></div>
+        <p style="margin-top:6px">Collected ₱41,100 <span style="color:var(--red)">− Expenses ₱16,507</span> = <strong style="color:var(--green)">₱24,593</strong><br>All expenses already paid. This is the true net balance.</p>
+      </div>
+      <div class="rem-stats" style="flex-direction:row">
+        <div class="rs"><div class="rs-lbl">Collected</div><div class="rs-val dim">₱41,100</div></div>
+        <div class="rs"><div class="rs-lbl">Spent</div><div class="rs-val red">₱16,507</div></div>
+        <div class="rs"><div class="rs-lbl">Outstanding</div><div class="rs-val amber">₱14,750</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout c-green" style="margin-bottom:20px">
+    <div class="callout-icon">✅</div>
+    <div>
+      <h4>Both Seasons Now Fully Settled</h4>
+      <p><strong style="color:var(--green)">Season 1 ₱33,794</strong> and <strong style="color:var(--green)">Season 2 ₱24,593</strong> are both net balances <em>after all expenses were paid</em> — the figures are directly comparable, and each represents funds actually available and preserved for the program.</p>
+    </div>
+  </div>
+
+  <!-- Season comparison -->
+  <div class="two-col">
+    <div class="cmp-card">
+      <div class="cmp-hdr amber">🏃 &nbsp;Season 1 — Q1 2026 (Jan – Mar)</div>
+      <div class="cmp-body">
+        <div class="cmp-row"><span class="cmp-k">Participants</span><span class="cmp-v">161</span></div>
+        <div class="cmp-row"><span class="cmp-k">Registration</span><span class="cmp-v">₱32,350</span></div>
+        <div class="cmp-row"><span class="cmp-k">T-Shirt Sales</span><span class="cmp-v">₱7,250</span></div>
+        <div class="cmp-row"><span class="cmp-k">NF Pledges</span><span class="cmp-v">₱8,200</span></div>
+        <div class="cmp-row"><span class="cmp-k">Belt Bag Sales</span><span class="cmp-v">₱500</span></div>
+        <div class="cmp-row"><span class="cmp-k">Total Collected</span><span class="cmp-v">₱48,300</span></div>
+        <div class="cmp-row"><span class="cmp-k">Expenses</span><span class="cmp-v red">₱14,506</span></div>
+        <div class="cmp-row"><span class="cmp-k">✅ Net Remaining (After Expenses)</span><span class="cmp-v green big">₱33,794</span></div>
+      </div>
+    </div>
+    <div class="cmp-card">
+      <div class="cmp-hdr green">🚴 &nbsp;Season 2 — Full Season (Sep 28)</div>
+      <div class="cmp-body">
+        <div class="cmp-row"><span class="cmp-k">Registrants</span><span class="cmp-v">116</span></div>
+        <div class="cmp-row"><span class="cmp-k">Normal Registration (₱250)</span><span class="cmp-v">₱15,750</span></div>
+        <div class="cmp-row"><span class="cmp-k">Reg + Belt Bag (₱350)</span><span class="cmp-v">₱2,450</span></div>
+        <div class="cmp-row"><span class="cmp-k">Reg + Shirt (₱450)</span><span class="cmp-v">₱18,450</span></div>
+        <div class="cmp-row"><span class="cmp-k">Reg + Belt Bag + Shirt (₱550)</span><span class="cmp-v">₱2,750</span></div>
+        <div class="cmp-row"><span class="cmp-k">Late Registration Fee</span><span class="cmp-v">₱400</span></div>
+        <div class="cmp-row"><span class="cmp-k">Additional Shirt Orders</span><span class="cmp-v">₱1,250</span></div>
+        <div class="cmp-row"><span class="cmp-k">Donation</span><span class="cmp-v">₱50</span></div>
+        <div class="cmp-row"><span class="cmp-k">Total Collected</span><span class="cmp-v">₱41,100</span></div>
+        <div class="cmp-row"><span class="cmp-k">Expenses</span><span class="cmp-v red">₱16,507</span></div>
+        <div class="cmp-row"><span class="cmp-k">✅ Net Remaining (After Expenses)</span><span class="cmp-v green big">₱24,593</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout c-green">
+    <div class="callout-icon">ℹ️</div>
+    <div>
+      <h4>About Project C.A.R.E.</h4>
+      <p>Project C.A.R.E. is an employee wellness and engagement initiative under the HR Learning & Organization Development team. Participation fees fund finisher medals, merchandise, and program expenses — with all surplus preserved for future seasons. This report covers Seasons 1 and 2 of the 2026 Wellness Run across Manila, Davao, and Cebu offices.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── SEASON 1 ─────────────────────────────────────────────────────────────── -->
+<div id="tab-season1" class="panel">
+
+  <div class="sec-title amber">Season 1 — Wellness Run Q1 2026</div>
+  <p class="sec-sub">January – March 2026 · Financial Status as of September 30, 2026 · Completed</p>
+
+  <!-- Remaining hero -->
+  <div class="rem-hero">
+    <div class="rem-hero-left">
+      <div class="eyebrow">✅ Season 1 Remaining Balance</div>
+      <div class="big-num"><span class="currency">₱</span><span class="counter" data-target="33794">0</span></div>
+      <p>Total collected ₱48,300 minus expenses ₱14,506 · All expenses covered · No personal absorption</p>
+    </div>
+    <div class="rem-stats">
+      <div class="rs"><div class="rs-lbl">Collected</div><div class="rs-val dim">₱48,300</div></div>
+      <div class="rs"><div class="rs-lbl">Spent</div><div class="rs-val red">₱14,506</div></div>
+      <div class="rs"><div class="rs-lbl">Outstanding</div><div class="rs-val amber">₱1,200</div></div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid g4">
+    <div class="kpi k-green"><div class="kpi-lbl">Participants</div><div class="kpi-val green">161</div><div class="kpi-sub">158 regular · 3 late</div></div>
+    <div class="kpi k-blue"><div class="kpi-lbl">T-Shirt Add-Ons</div><div class="kpi-val blue">29</div><div class="kpi-sub">₱250 each · ₱7,250 revenue</div></div>
+    <div class="kpi k-amber"><div class="kpi-lbl">NF Pledges</div><div class="kpi-val amber">41 / 47</div><div class="kpi-sub">87.2% compliance</div></div>
+    <div class="kpi k-red"><div class="kpi-lbl">Outstanding</div><div class="kpi-val red">₱1,200</div><div class="kpi-sub">6 NF pledges only</div></div>
+  </div>
+
+  <!-- A. Registration -->
+  <div class="tbl-lbl">📋 &nbsp;A. Registration Collection</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Payment Type</th><th>Channel</th><th class="th-c">Pax</th><th class="th-r">Rate</th><th class="th-r">Amount</th></tr></thead>
+      <tbody>
+        <tr><td>Regular Registration</td><td>UnionBank</td><td class="td-c">74</td><td class="td-r td-muted">₱200</td><td class="td-r td-b">₱14,800</td></tr>
+        <tr><td></td><td>GCash</td><td class="td-c">83</td><td class="td-r td-muted">₱200</td><td class="td-r td-b">₱16,600</td></tr>
+        <tr><td></td><td>Cash</td><td class="td-c">1</td><td class="td-r td-muted">₱200</td><td class="td-r td-b">₱200</td></tr>
+        <tr><td>Late Registration</td><td>UnionBank</td><td class="td-c">1</td><td class="td-r td-muted">₱250</td><td class="td-r td-b">₱250</td></tr>
+        <tr><td></td><td>Cash</td><td class="td-c">2</td><td class="td-r td-muted">₱250</td><td class="td-r td-b">₱500</td></tr>
+      </tbody>
+      <tfoot><tr><td class="td-b">TOTAL REGISTRATION</td><td></td><td class="td-c td-b">161</td><td></td><td class="td-r td-b">₱32,350</td></tr></tfoot>
+    </table>
+  </div>
+
+  <!-- B & D -->
+  <div class="two-col">
+    <div>
+      <div class="tbl-lbl">👕 &nbsp;B. T-Shirt DTF Add-On</div>
+      <div class="tbl-wrap" style="margin-bottom:10px">
+        <table>
+          <thead><tr><th>Item</th><th class="th-c">Pax</th><th class="th-r">Revenue</th><th class="th-r">Cost</th><th class="th-r">Surplus</th></tr></thead>
+          <tbody><tr><td>T-Shirt DTF</td><td class="td-c">29</td><td class="td-r td-green">₱7,250</td><td class="td-r td-muted">₱4,930</td><td class="td-r td-green td-b">₱2,320</td></tr></tbody>
+        </table>
+      </div>
+      <div class="callout c-green" style="margin-bottom:0">
+        <div class="callout-icon">✅</div>
+        <div><h4>₱80 surplus per shirt</h4><p>Bought at ₱170, sold at ₱250. 29 × ₱80 = <strong>₱2,320</strong> returned to program funds.</p></div>
+      </div>
+    </div>
+    <div>
+      <div class="tbl-lbl">🎒 &nbsp;D. Belt Bag Sales</div>
+      <div class="tbl-wrap" style="margin-bottom:10px">
+        <table>
+          <thead><tr><th>Item</th><th class="th-c">Sold</th><th class="th-c">Paid</th><th class="th-r">Collected</th><th class="th-r">Outstanding</th></tr></thead>
+          <tbody><tr><td>Belt Bags</td><td class="td-c">5</td><td class="td-c td-green">5</td><td class="td-r td-green">₱500</td><td class="td-r td-muted">₱0</td></tr></tbody>
+        </table>
+      </div>
+      <div class="callout c-green" style="margin-bottom:0">
+        <div class="callout-icon">✅</div>
+        <div><h4>All belt bags paid</h4><p>The last buyer settled ₱100 on September 30, 2026. All 5 belt bags are now fully paid — ₱0 outstanding.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C. NF Pledges -->
+  <div class="mt24">
+    <div class="tbl-lbl">🏃 &nbsp;C. Non-Finisher Pledges (₱200 each)</div>
+    <div class="two-col">
+      <div class="tbl-wrap" style="margin-bottom:0">
+        <table>
+          <thead><tr><th>Snapshot</th><th class="th-c">NF Total</th><th class="th-c">Paid</th><th class="th-r">Collected</th><th class="th-r">Outstanding</th><th class="th-c">Rate</th></tr></thead>
+          <tbody>
+            <tr><td>April 16, 2026</td><td class="td-c">47</td><td class="td-c">9</td><td class="td-r">₱1,800</td><td class="td-r td-amber">₱7,600</td><td class="td-c td-muted">19%</td></tr>
+            <tr class="hl-row"><td><strong>June 16, 2026 ★</strong></td><td class="td-c">47</td><td class="td-c td-green"><strong>41</strong></td><td class="td-r td-green"><strong>₱8,200</strong></td><td class="td-r td-amber"><strong>₱1,200</strong></td><td class="td-c td-green"><strong>87%</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="glass green-top" style="margin-bottom:0;padding:18px">
+        <div class="glass-title" style="font-size:14px;margin-bottom:12px">Collection Progress</div>
+        <div class="prog-item">
+          <div class="prog-label"><span class="lbl">Apr 16 — 9 paid</span><span class="pct">19%</span></div>
+          <div class="prog-bar"><div class="prog-fill pf-red" style="width:19%"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-label"><span class="lbl">Jun 16 — 41 paid</span><span class="pct">87%</span></div>
+          <div class="prog-bar"><div class="prog-fill pf-green" style="width:87%"></div></div>
+        </div>
+        <p style="font-size:11px;color:var(--muted);margin-top:8px">6 non-finishers unpaid · ₱1,200 outstanding</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- E. Expenses -->
+  <div class="mt24">
+    <div class="tbl-lbl">💸 &nbsp;E. Expenses</div>
+    <div class="two-col">
+      <div class="tbl-wrap" style="margin-bottom:0">
+        <table>
+          <thead><tr><th>Item</th><th>Description</th><th class="th-r">Amount</th><th class="th-c">Share</th></tr></thead>
+          <tbody>
+            <tr><td class="td-b">Medals</td><td class="td-muted">Personalized Acrylic w/ Lanyard</td><td class="td-r">₱7,659</td><td class="td-c td-muted">52.8%</td></tr>
+            <tr><td class="td-b">T-Shirt DTF</td><td class="td-muted">Printing cost (29 pcs)</td><td class="td-r">₱4,930</td><td class="td-c td-muted">34.0%</td></tr>
+            <tr><td class="td-b">Belt Bags</td><td class="td-muted">Finisher bags produced</td><td class="td-r">₱1,559</td><td class="td-c td-muted">10.7%</td></tr>
+            <tr><td class="td-b">Delivery Fees</td><td class="td-muted">All delivery charges</td><td class="td-r">₱308</td><td class="td-c td-muted">2.1%</td></tr>
+            <tr><td class="td-b">Transfer Fees</td><td class="td-muted">Bank fees</td><td class="td-r">₱50</td><td class="td-c td-muted">0.3%</td></tr>
+          </tbody>
+          <tfoot><tr><td class="td-b">TOTAL</td><td></td><td class="td-r td-b">₱14,506</td><td class="td-c">100%</td></tr></tfoot>
+        </table>
+      </div>
+      <div class="glass amber-top" style="margin-bottom:0;padding:18px">
+        <div class="glass-title" style="font-size:14px;margin-bottom:12px">Expense Breakdown</div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Medals</span><span class="pct">₱7,659 · 52.8%</span></div><div class="prog-bar"><div class="prog-fill pf-green" data-width="52.8"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">T-Shirt Printing</span><span class="pct">₱4,930 · 34.0%</span></div><div class="prog-bar"><div class="prog-fill pf-blue" data-width="34"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Belt Bags</span><span class="pct">₱1,559 · 10.7%</span></div><div class="prog-bar"><div class="prog-fill pf-amber" data-width="10.7"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Delivery + Fees</span><span class="pct">₱358 · 2.5%</span></div><div class="prog-bar"><div class="prog-fill pf-red" data-width="2.5"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F. Net Summary -->
+  <div class="mt24">
+    <div class="tbl-lbl">💰 &nbsp;F. Total Collected &amp; Net Summary</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Snapshot</th><th class="th-r">Registration</th><th class="th-r">T-Shirts</th><th class="th-r">NF Pledges</th><th class="th-r">Belt Bags</th><th class="th-r">Total Collected</th><th class="th-r">Remaining</th></tr></thead>
+        <tbody>
+          <tr><td>April 16, 2026</td><td class="td-r">₱32,350</td><td class="td-r">₱7,250</td><td class="td-r">₱1,800</td><td class="td-r td-muted">—</td><td class="td-r td-b">₱41,400</td><td class="td-r td-amber">₱26,894</td></tr>
+          <tr><td>June 16, 2026</td><td class="td-r">₱32,350</td><td class="td-r">₱7,250</td><td class="td-r">₱8,200</td><td class="td-r">₱400</td><td class="td-r td-b">₱48,200</td><td class="td-r">₱33,694</td></tr>
+          <tr class="hl-row"><td><strong>September 30, 2026 ★</strong></td><td class="td-r">₱32,350</td><td class="td-r">₱7,250</td><td class="td-r">₱8,200</td><td class="td-r">₱500</td><td class="td-r td-green td-b">₱48,300</td><td class="td-r td-green td-b">₱33,794</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- G. Outstanding -->
+  <div class="tbl-lbl">⚠️ &nbsp;G. Outstanding Balances</div>
+  <div class="two-col">
+    <div class="tbl-wrap" style="margin-bottom:0">
+      <table>
+        <thead><tr><th>Item</th><th class="th-c">Count</th><th class="th-r">Rate</th><th class="th-r">Amount</th></tr></thead>
+        <tbody>
+          <tr><td>NF Pledges (Unpaid / Resigned)</td><td class="td-c td-amber">6</td><td class="td-r">₱200</td><td class="td-r td-amber td-b">₱1,200</td></tr>
+        </tbody>
+        <tfoot><tr><td class="td-b">TOTAL OUTSTANDING</td><td></td><td></td><td class="td-r td-b">₱1,200</td></tr></tfoot>
+      </table>
+    </div>
+    <div class="callout c-amber" style="margin-bottom:0">
+      <div class="callout-icon">📌</div>
+      <div><h4>Not included in remaining balance</h4><p>These ₱1,200 (6 unpaid NF pledges) are tracked but <strong>not pre-counted</strong> in the ₱33,794 remaining. If collected, remaining grows to ₱34,994.</p></div>
+    </div>
+  </div>
+
+  <!-- H. Savings -->
+  <div class="mt24 savings-block">
+    <div class="eyebrow" style="color:var(--amber)">🌟 H. Savings &amp; Value Added to Project C.A.R.E.</div>
+    <div class="two-col mt16">
+      <div>
+        <div class="tbl-lbl" style="color:var(--muted)">Part 1 — Procurement Savings</div>
+        <div class="tbl-wrap" style="margin-bottom:0">
+          <table>
+            <thead><tr><th>Item</th><th class="th-c">Qty</th><th class="th-r">Market</th><th class="th-r">Paid</th><th class="th-r">Savings/Unit</th><th class="th-r">Total</th></tr></thead>
+            <tbody><tr><td>Medals</td><td class="td-c">111</td><td class="td-r td-muted">₱100</td><td class="td-r td-muted">₱69</td><td class="td-r td-green">₱31</td><td class="td-r td-green td-b">₱3,441</td></tr></tbody>
+            <tfoot><tr><td colspan="5">TOTAL PROCUREMENT SAVINGS</td><td class="td-r td-b">₱3,441</td></tr></tfoot>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="tbl-lbl" style="color:var(--muted)">Part 2 — Merchandise Sales Surplus</div>
+        <div class="tbl-wrap" style="margin-bottom:0">
+          <table>
+            <thead><tr><th>Item</th><th class="th-c">Units</th><th class="th-r">Revenue</th><th class="th-r">Cost</th><th class="th-r">Surplus</th></tr></thead>
+            <tbody>
+              <tr><td>T-Shirt DTF</td><td class="td-c">29</td><td class="td-r">₱7,250</td><td class="td-r td-muted">₱4,930</td><td class="td-r td-green td-b">₱2,320</td></tr>
+              <tr><td>Belt Bag Sales</td><td class="td-c">5</td><td class="td-r">₱500</td><td class="td-r td-muted">₱300</td><td class="td-r td-green td-b">₱200</td></tr>
+              <tr><td>Late Reg Premium</td><td class="td-c">3</td><td class="td-r">₱750</td><td class="td-r td-muted">₱600</td><td class="td-r td-green td-b">₱150</td></tr>
+            </tbody>
+            <tfoot><tr><td colspan="4">TOTAL SALES SURPLUS</td><td class="td-r td-b">₱2,670</td></tr></tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="savings-total">
+      <span class="st-label">🌟 &nbsp;Total Value Added to Project C.A.R.E. &nbsp;(Savings + Surplus)</span>
+      <span class="st-val">₱6,111</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── SEASON 2 ─────────────────────────────────────────────────────────────── -->
+<div id="tab-season2" class="panel">
+
+  <div class="sec-title green">Season 2 — Full Season Summary</div>
+  <p class="sec-sub">Season 2 · Updated as of September 28, 2026 · Expenses Recorded</p>
+
+  <!-- Remaining hero -->
+  <div class="rem-hero">
+    <div class="rem-hero-left">
+      <div class="eyebrow">✅ Season 2 Remaining Balance</div>
+      <div class="big-num"><span class="currency">₱</span><span class="counter" data-target="24593">0</span></div>
+      <p>Total collected ₱41,100 minus expenses ₱16,507 · All expenses covered · No personal absorption</p>
+    </div>
+    <div class="rem-stats">
+      <div class="rs"><div class="rs-lbl">Collected</div><div class="rs-val dim">₱41,100</div></div>
+      <div class="rs"><div class="rs-lbl">Spent</div><div class="rs-val red">₱16,507</div></div>
+      <div class="rs"><div class="rs-lbl">Outstanding</div><div class="rs-val amber">₱14,750</div></div>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid g4">
+    <div class="kpi k-green"><div class="kpi-lbl">Participants</div><div class="kpi-val green">116</div><div class="kpi-sub">108 regular · 8 late</div></div>
+    <div class="kpi k-blue"><div class="kpi-lbl">T-Shirt Orders</div><div class="kpi-val blue">51</div><div class="kpi-sub">46 bundled · 5 added later</div></div>
+    <div class="kpi k-amber"><div class="kpi-lbl">NF Pledges</div><div class="kpi-val amber">59</div><div class="kpi-sub">₱250 each · pending collection</div></div>
+    <div class="kpi k-red"><div class="kpi-lbl">Outstanding</div><div class="kpi-val red">₱14,750</div><div class="kpi-sub">59 NF pledges only</div></div>
+  </div>
+
+  <!-- A. Packages -->
+  <div class="tbl-lbl">📦 &nbsp;A. Registration by Package</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Package</th><th>Includes</th><th class="th-c">Pax</th><th class="th-r">Rate</th><th class="th-r">Collected</th></tr></thead>
+      <tbody>
+        <tr><td class="td-b">Normal Registration</td><td class="td-muted">Race number · No merch</td><td class="td-c">63</td><td class="td-r td-muted">₱250</td><td class="td-r td-green td-b">₱15,750</td></tr>
+        <tr><td class="td-b">Reg + Belt Bag</td><td class="td-muted">Race number · Belt Bag</td><td class="td-c">7</td><td class="td-r td-muted">₱350</td><td class="td-r td-green td-b">₱2,450</td></tr>
+        <tr><td class="td-b">Reg + Shirt</td><td class="td-muted">Race number · T-Shirt</td><td class="td-c">41</td><td class="td-r td-muted">₱450</td><td class="td-r td-green td-b">₱18,450</td></tr>
+        <tr><td class="td-b">Reg + Belt Bag + Shirt</td><td class="td-muted">Race number · T-Shirt · Belt Bag</td><td class="td-c">5</td><td class="td-r td-muted">₱550</td><td class="td-r td-green td-b">₱2,750</td></tr>
+      </tbody>
+      <tfoot><tr><td class="td-b">SUBTOTAL — REGISTRANTS</td><td></td><td class="td-c td-b">116</td><td></td><td class="td-r td-b">₱39,400</td></tr></tfoot>
+    </table>
+  </div>
+  <div class="tbl-wrap" style="margin-top:12px">
+    <table>
+      <thead><tr><th>Add-On</th><th>Description</th><th class="th-c">Pax</th><th class="th-r">Rate</th><th class="th-r">Collected</th></tr></thead>
+      <tbody>
+        <tr><td class="td-b">Late Registration Fee</td><td class="td-muted">Surcharge on 8 of the registrants above who signed up late</td><td class="td-c">8</td><td class="td-r td-muted">+₱50</td><td class="td-r td-amber td-b">₱400</td></tr>
+        <tr><td class="td-b">Additional Shirt Orders</td><td class="td-muted">5 registrants who skipped a shirt at first, added one later</td><td class="td-c">5</td><td class="td-r td-muted">₱250</td><td class="td-r td-amber td-b">₱1,250</td></tr>
+        <tr><td class="td-b">Donation</td><td class="td-muted">One-time voluntary donation, not tied to a specific registrant</td><td class="td-c td-muted">—</td><td class="td-r td-muted">one-time</td><td class="td-r td-amber td-b">₱50</td></tr>
+      </tbody>
+      <tfoot><tr><td class="td-b">TOTAL COLLECTED</td><td></td><td class="td-c td-b">116</td><td></td><td class="td-r td-b" style="color:var(--green);font-size:15px">₱41,100</td></tr></tfoot>
+    </table>
+  </div>
+  <div class="callout c-blue">
+    <div class="callout-icon">ℹ️</div>
+    <div><h4>Why Total Collected (₱41,100) Is More Than the Package Subtotal (₱39,400)</h4>
+    <p>+₱1,700 on top of the four package tiers — ₱400 from 8 registrants who paid a late-registration surcharge, ₱1,250 from 5 registrants who registered without a shirt and paid an extra ₱250 each to add one later, and a ₱50 one-time donation. All 116 registrants are counted once; these are additional payments, not additional people.</p></div>
+  </div>
+
+  <!-- B & C -->
+  <div class="two-col">
+    <div>
+      <div class="tbl-lbl">🏃 &nbsp;B. Registration by Category</div>
+      <p style="font-size:11px;color:var(--muted);margin:-6px 0 10px">✅ Verified from registration form — 116 total registration entries.</p>
+      <div class="glass green-top" style="margin-bottom:0;padding:18px">
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Igniter — 100 KM</span><span class="pct">45 · 38.8%</span></div><div class="prog-bar"><div class="prog-fill pf-green" data-width="38.8"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Elite — 300 KM</span><span class="pct">33 · 28.4%</span></div><div class="prog-bar"><div class="prog-fill pf-blue" data-width="28.4"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Challenger — 50 KM</span><span class="pct">27 · 23.3%</span></div><div class="prog-bar"><div class="prog-fill pf-amber" data-width="23.3"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Ride — Ascend 400 KM</span><span class="pct">6 · 5.2%</span></div><div class="prog-bar"><div class="prog-fill pf-red" data-width="5.2"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Ride — Enduro 750 KM</span><span class="pct">5 · 4.3%</span></div><div class="prog-bar"><div class="prog-fill pf-purple" data-width="4.3"></div></div></div>
+      </div>
+      <p style="font-size:10px;color:var(--muted2);margin-top:8px">109 individual participants registered 116 total entries — 7 (all male employees, 5 Davao/2 Manila) joined both a Stride and a Ride category, counted once per discipline.</p>
+    </div>
+    <div>
+      <div class="tbl-lbl">📍 &nbsp;C. Registration by Site</div>
+      <p style="font-size:11px;color:var(--muted);margin:-6px 0 10px">✅ Verified from registration form — 116 total registration entries.</p>
+      <div class="tbl-wrap" style="margin-bottom:12px">
+        <table>
+          <thead><tr><th>Site</th><th class="th-c">Total</th><th class="th-c">Male</th><th class="th-c">Female</th><th class="th-c">Emp.</th><th class="th-c">+1</th></tr></thead>
+          <tbody>
+            <tr><td>Manila</td><td class="td-c td-b">55</td><td class="td-c">26</td><td class="td-c">29</td><td class="td-c">46</td><td class="td-c">9</td></tr>
+            <tr><td>Davao</td><td class="td-c td-b">51</td><td class="td-c">30</td><td class="td-c">21</td><td class="td-c">45</td><td class="td-c">6</td></tr>
+            <tr><td>Cebu</td><td class="td-c td-b">10</td><td class="td-c">4</td><td class="td-c">6</td><td class="td-c">10</td><td class="td-c">0</td></tr>
+          </tbody>
+          <tfoot><tr><td>TOTAL</td><td class="td-c">116</td><td class="td-c">60</td><td class="td-c">56</td><td class="td-c">101</td><td class="td-c">15</td></tr></tfoot>
+        </table>
+      </div>
+      <div class="kpi-grid g3" style="margin-bottom:0">
+        <div class="kpi k-green" style="padding:14px 16px"><div class="kpi-lbl">Manila</div><div class="kpi-val green" style="font-size:20px">47.4%</div><div class="kpi-sub">55 of 116</div></div>
+        <div class="kpi k-blue" style="padding:14px 16px"><div class="kpi-lbl">Davao</div><div class="kpi-val blue" style="font-size:20px">44.0%</div><div class="kpi-sub">51 of 116</div></div>
+        <div class="kpi k-amber" style="padding:14px 16px"><div class="kpi-lbl">Cebu</div><div class="kpi-val amber" style="font-size:20px">8.6%</div><div class="kpi-sub">10 of 116</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D. T-Shirts -->
+  <div class="tbl-lbl mt24">👕 &nbsp;D. T-Shirt Orders (51 shirts total)</div>
+  <p style="font-size:11px;color:var(--muted);margin:-6px 0 10px">✅ Verified as of September 30, 2026 — 46 shirts bundled in registration (₱200 each) + 5 additional orders (₱250 each) = 51.</p>
+    <div class="tbl-wrap" style="margin-bottom:0">
+      <table>
+        <thead><tr><th>Size</th><th class="th-c">Qty</th><th class="th-c">% of Orders</th></tr></thead>
+        <tbody>
+          <tr><td>XS</td><td class="td-c">1</td><td class="td-c td-muted">2.0%</td></tr>
+          <tr><td>S</td><td class="td-c">7</td><td class="td-c td-muted">13.7%</td></tr>
+          <tr><td>M</td><td class="td-c td-b td-green">20</td><td class="td-c td-green">39.2%</td></tr>
+          <tr><td>L</td><td class="td-c td-b td-green">14</td><td class="td-c td-green">27.5%</td></tr>
+          <tr><td>XL</td><td class="td-c">8</td><td class="td-c td-muted">15.7%</td></tr>
+          <tr><td>XXL</td><td class="td-c">1</td><td class="td-c td-muted">2.0%</td></tr>
+        </tbody>
+        <tfoot><tr><td class="td-b">TOTAL</td><td class="td-c td-b">51</td><td></td></tr></tfoot>
+      </table>
+    </div>
+
+  <!-- E. Expenses -->
+  <div class="mt24">
+    <div class="tbl-lbl">💸 &nbsp;E. Expenses</div>
+    <div class="two-col">
+      <div class="tbl-wrap" style="margin-bottom:0">
+        <table>
+          <thead><tr><th>Item</th><th>Description</th><th class="th-r">Amount</th><th class="th-c">Share</th></tr></thead>
+          <tbody>
+            <tr><td class="td-b">Shirts &amp; Belt Bag Print</td><td class="td-muted">First production run (1st order)</td><td class="td-r">₱8,690</td><td class="td-c td-muted">52.7%</td></tr>
+            <tr><td class="td-b">Medals &amp; 2nd Order Shirts</td><td class="td-muted">Finisher medals + second shirt print run</td><td class="td-r">₱5,525</td><td class="td-c td-muted">33.5%</td></tr>
+            <tr><td class="td-b">Belt Bag Orders</td><td class="td-muted">Order 1 (₱697) + Order 2 (₱925)</td><td class="td-r">₱1,622</td><td class="td-c td-muted">9.8%</td></tr>
+            <tr><td class="td-b">Delivery Fees (Lalamove)</td><td class="td-muted">4 deliveries — Sep 3, Sep 15, Sep 28, buffer</td><td class="td-r">₱670</td><td class="td-c td-muted">4.1%</td></tr>
+          </tbody>
+          <tfoot><tr><td class="td-b">TOTAL</td><td></td><td class="td-r td-b">₱16,507</td><td class="td-c">100%</td></tr></tfoot>
+        </table>
+      </div>
+      <div class="glass amber-top" style="margin-bottom:0;padding:18px">
+        <div class="glass-title" style="font-size:14px;margin-bottom:12px">Expense Breakdown</div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Shirts &amp; Belt Bag Print</span><span class="pct">₱8,690 · 52.7%</span></div><div class="prog-bar"><div class="prog-fill pf-green" data-width="52.7"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Medals &amp; 2nd Order Shirts</span><span class="pct">₱5,525 · 33.5%</span></div><div class="prog-bar"><div class="prog-fill pf-blue" data-width="33.5"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Belt Bag Orders</span><span class="pct">₱1,622 · 9.8%</span></div><div class="prog-bar"><div class="prog-fill pf-amber" data-width="9.8"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span class="lbl">Delivery (Lalamove)</span><span class="pct">₱670 · 4.1%</span></div><div class="prog-bar"><div class="prog-fill pf-red" data-width="4.1"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- F. Net Summary -->
+  <div class="mt24">
+    <div class="tbl-lbl">💰 &nbsp;F. Total Collected &amp; Net Summary</div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Snapshot</th><th class="th-r">Registration</th><th class="th-r">Late Fee</th><th class="th-r">Add'l Shirts</th><th class="th-r">Donation</th><th class="th-r">Total Collected</th><th class="th-r">Expenses</th><th class="th-r">Remaining</th></tr></thead>
+        <tbody>
+          <tr class="hl-row"><td><strong>September 28, 2026 ★</strong></td><td class="td-r">₱39,400</td><td class="td-r">₱400</td><td class="td-r">₱1,250</td><td class="td-r">₱50</td><td class="td-r td-green td-b">₱41,100</td><td class="td-r">₱16,507</td><td class="td-r td-green td-b">₱24,593</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- G. Outstanding -->
+  <div class="mt24">
+    <div class="tbl-lbl">⚠️ &nbsp;G. Outstanding — Non-Finisher Pledges (₱250 each)</div>
+    <div class="two-col">
+      <div class="tbl-wrap" style="margin-bottom:0">
+        <table>
+          <thead><tr><th>Item</th><th class="th-c">Count</th><th class="th-r">Rate</th><th class="th-r">Amount</th></tr></thead>
+          <tbody>
+            <tr><td>Non-Finisher Pledges (Pending Collection)</td><td class="td-c td-amber">59</td><td class="td-r">₱250</td><td class="td-r td-amber td-b">₱14,750</td></tr>
+          </tbody>
+          <tfoot><tr><td class="td-b">TOTAL OUTSTANDING</td><td></td><td></td><td class="td-r td-b">₱14,750</td></tr></tfoot>
+        </table>
+      </div>
+      <div class="callout c-amber" style="margin-bottom:0">
+        <div class="callout-icon">📌</div>
+        <div><h4>Not included in remaining balance</h4><p>59 participants who did not complete their category's distance goal owe a ₱250 non-finisher pledge, totaling <strong>₱14,750</strong>. This is tracked but <strong>not pre-counted</strong> in the ₱24,593 remaining. If fully collected, remaining grows to <strong style="color:var(--green)">₱39,343</strong>.</p></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── ACCOUNTABILITY ────────────────────────────────────────────────────────── -->
+<div id="tab-accountability" class="panel">
+
+  <div class="sec-title red">Accountability &amp; Fund Status</div>
+  <p class="sec-sub">Full program fund accounting · Updated as of September 30, 2026</p>
+
+  <!-- Season totals — both now net -->
+  <div class="two-col" style="margin-bottom:0">
+    <div class="fund-total-box">
+      <div class="ft-lbl">✅ Season 1 — Net Remaining (After All Expenses)</div>
+      <div class="ft-val" style="font-size:48px">₱33,794</div>
+      <div class="ft-sub">Collected ₱48,300 − Expenses ₱14,506 · All costs settled · True net balance</div>
+    </div>
+    <div class="fund-total-box">
+      <div class="ft-lbl">✅ Season 2 — Net Remaining (After All Expenses)</div>
+      <div class="ft-val" style="font-size:48px">₱24,593</div>
+      <div class="ft-sub">Collected ₱41,100 − Expenses ₱16,507 · All costs settled · True net balance</div>
+    </div>
+  </div>
+  <div class="callout c-green mt24">
+    <div class="callout-icon">✅</div>
+    <div>
+      <h4>Both Seasons Now Directly Comparable</h4>
+      <p>Season 1's ₱33,794 and Season 2's ₱24,593 are both <strong>final, net</strong> figures — expenses have been fully paid for both seasons. Combined, the program has preserved <strong style="color:var(--green)">₱58,387</strong> across both seasons.</p>
+    </div>
+  </div>
+
+  <!-- Fund status table -->
+  <div class="tbl-lbl mt24">📊 &nbsp;Combined Fund Status</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Season</th><th>Period</th><th class="th-r">Collected</th><th class="th-r">Expenses</th><th class="th-r">Available Balance</th><th class="th-c">Status</th></tr></thead>
+      <tbody>
+        <tr><td class="td-b">Season 1</td><td class="td-muted">Jan – Mar 2026</td><td class="td-r">₱48,300</td><td class="td-r td-red">₱14,506</td><td class="td-r td-green td-b">₱33,794</td><td class="td-c"><span class="pill p-green">Completed</span></td></tr>
+        <tr><td class="td-b">Season 2</td><td class="td-muted">2026 · Updated Sep 28</td><td class="td-r">₱41,100</td><td class="td-r td-red">₱16,507</td><td class="td-r td-green td-b">₱24,593</td><td class="td-c"><span class="pill p-green">Completed</span></td></tr>
+      </tbody>
+      <tfoot><tr><td class="td-b">TOTAL PROGRAM FUNDS</td><td></td><td class="td-r td-b">₱89,400</td><td class="td-r td-b">₱31,013</td><td class="td-r td-b" style="font-size:15px;color:var(--green)">₱58,387</td><td></td></tr></tfoot>
+    </table>
+  </div>
+
+  <!-- Where funds came from -->
+  <div class="two-col">
+    <div class="glass blue-top" style="margin-bottom:0">
+      <div class="glass-title">📈 &nbsp;Where Season 1 Funds Came From</div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Registration Fees (161 × ₱200–250)</span><span class="pct">₱32,350 · 67.0%</span></div><div class="prog-bar"><div class="prog-fill pf-green" data-width="67.0"></div></div></div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Non-Finisher Pledges (41 × ₱200)</span><span class="pct">₱8,200 · 17.0%</span></div><div class="prog-bar"><div class="prog-fill pf-amber" data-width="17"></div></div></div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">T-Shirt Sales (29 × ₱250)</span><span class="pct">₱7,250 · 15.0%</span></div><div class="prog-bar"><div class="prog-fill pf-blue" data-width="15"></div></div></div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Belt Bag Sales (5 × ₱100)</span><span class="pct">₱500 · 1.0%</span></div><div class="prog-bar"><div class="prog-fill pf-red" data-width="1.0"></div></div></div>
+    </div>
+    <div class="glass green-top" style="margin-bottom:0">
+      <div class="glass-title">📈 &nbsp;Where Season 2 Funds Came From</div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Reg + Shirt (41 × ₱450)</span><span class="pct">₱18,450 · 44.9%</span></div><div class="prog-bar"><div class="prog-fill pf-green" data-width="44.9"></div></div></div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Normal Registration (63 × ₱250)</span><span class="pct">₱15,750 · 38.3%</span></div><div class="prog-bar"><div class="prog-fill pf-blue" data-width="38.3"></div></div></div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Reg + Belt Bag + Shirt (5 × ₱550)</span><span class="pct">₱2,750 · 6.7%</span></div><div class="prog-bar"><div class="prog-fill pf-amber" data-width="6.7"></div></div></div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Reg + Belt Bag (7 × ₱350)</span><span class="pct">₱2,450 · 6.0%</span></div><div class="prog-bar"><div class="prog-fill pf-purple" data-width="6.0"></div></div></div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Additional Shirt Orders (5 × ₱250)</span><span class="pct">₱1,250 · 3.0%</span></div><div class="prog-bar"><div class="prog-fill pf-red" data-width="3.0"></div></div></div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Late Registration Fee (8 × ₱50)</span><span class="pct">₱400 · 1.0%</span></div><div class="prog-bar"><div class="prog-fill pf-red" data-width="1.0"></div></div></div>
+      <div class="prog-item"><div class="prog-label"><span class="lbl">Donation (1 × ₱50)</span><span class="pct">₱50 · 0.1%</span></div><div class="prog-bar"><div class="prog-fill pf-purple" data-width="0.1"></div></div></div>
+    </div>
+  </div>
+
+  <!-- Commitments -->
+  <div class="three-col">
+    <div class="callout c-green" style="flex-direction:column;margin-bottom:0">
+      <div style="font-size:24px;margin-bottom:8px">✅</div>
+      <div><h4>Every Peso Accounted For</h4><p>All collections recorded by channel (UnionBank / GCash / Cash). Nothing rounded or estimated.</p></div>
+    </div>
+    <div class="callout c-blue" style="flex-direction:column;margin-bottom:0">
+      <div style="font-size:24px;margin-bottom:8px">📋</div>
+      <div><h4>Expenses Backed by Receipts</h4><p>All Season 1 and Season 2 expenses documented with supplier receipts and delivery confirmations on file with HR.</p></div>
+    </div>
+    <div class="callout c-amber" style="flex-direction:column;margin-bottom:0">
+      <div style="font-size:24px;margin-bottom:8px">🔄</div>
+      <div><h4>No Personal Absorption</h4><p>No program officer personally covered any cost. All expenses paid from collected funds. ₱58,387 combined surplus preserved.</p></div>
+    </div>
+  </div>
+
+  <!-- Successor note -->
+  <div class="callout c-green mt24">
+    <div class="callout-icon">📌</div>
+    <div>
+      <h4>Note to Program Successor</h4>
+      <p>This report documents the complete financial history of Project C.A.R.E. Seasons 1 and 2. The <strong>Season 1 - Final.xlsx</strong> and <strong>Season 2 - Final.xlsx</strong> workbooks contain full formula-driven breakdowns with editable inputs for future updates. The ₱33,794 Season 1 remaining balance and ₱24,593 Season 2 remaining balance are the starting balances for whoever continues this program. All procurement was done at discounted prices — supplier relationships and sourcing notes should be preserved for continuity.</p>
+    </div>
+  </div>
+
+</div><!-- /accountability -->
+
+<!-- ═══ FOOTER ═════════════════════════════════════════════════════════════════ -->
+<div class="site-footer">
+  <h3>Project C.A.R.E. — Financial Transparency Report</h3>
+  <p>Published in the spirit of full transparency to every participant, employee, and stakeholder of the Wellness Run 2026 program. Every figure is drawn directly from official collection records and verified expense receipts.</p>
+  <p style="margin-top:6px">Prepared by the HR Learning &amp; Organization Development Team &nbsp;·&nbsp; ICC/API/KTI/DBT</p>
+  <p>Manila · Davao · Cebu &nbsp;·&nbsp; Seasons 1 &amp; 2, 2026</p>
+  <div class="footer-seal">Report updated: September 30, 2026 &nbsp;·&nbsp; Originally generated June 16, 2026 &nbsp;·&nbsp; Verified against Season 1 &amp; Season 2 Final Workbooks</div>
+</div>
+
+<script>
+/* ── PARTICLES ─────────────────────────────────────────────────────────────── */
+(function(){
+  const wrap = document.getElementById('particles');
+  const colors = ['rgba(59,130,246,0.4)','rgba(16,185,129,0.4)','rgba(230,57,70,0.3)','rgba(245,158,11,0.35)','rgba(34,211,238,0.3)'];
+  for(let i=0;i<28;i++){
+    const el = document.createElement('div');
+    el.className='pt';
+    const sz = Math.random()*4+2;
+    el.style.cssText=`
+      width:${sz}px;height:${sz}px;
+      left:${Math.random()*100}%;
+      background:${colors[i%colors.length]};
+      animation-duration:${12+Math.random()*10}s;
+      animation-delay:${Math.random()*14}s;
+      filter:blur(${Math.random()*1}px);
+    `;
+    wrap.appendChild(el);
+  }
+})();
+
+/* ── SCROLL PROGRESS BAR ───────────────────────────────────────────────────── */
+window.addEventListener('scroll',()=>{
+  const pct = window.scrollY/(document.documentElement.scrollHeight-window.innerHeight)*100;
+  document.getElementById('pfill').style.width = Math.min(pct,100)+'%';
+});
+
+/* ── TAB SWITCHER ─────────────────────────────────────────────────────────── */
+function showTab(name, btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  // trigger animations for the newly shown panel
+  setTimeout(()=>{animateBars(); animateCounters();}, 50);
+}
+
+/* ── ANIMATED PROGRESS BARS ────────────────────────────────────────────────── */
+function animateBars(){
+  document.querySelectorAll('.panel.active .prog-fill[data-width]').forEach(el=>{
+    el.style.width = '0';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      el.style.width = el.dataset.width + '%';
+    }));
+  });
+}
+
+/* ── ANIMATED COUNTERS ─────────────────────────────────────────────────────── */
+function animateCounters(){
+  document.querySelectorAll('.panel.active .counter[data-target]').forEach(el=>{
+    const target = parseInt(el.dataset.target);
+    const duration = 1400;
+    const start = performance.now();
+    function step(now){
+      const pct = Math.min((now-start)/duration,1);
+      const ease = 1-Math.pow(1-pct,3); // ease-out cubic
+      const val = Math.round(ease*target);
+      el.textContent = val.toLocaleString();
+      if(pct<1) requestAnimationFrame(step);
+      else el.textContent = target.toLocaleString();
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+/* ── INIT ──────────────────────────────────────────────────────────────────── */
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{animateBars(); animateCounters();}, 200);
+});
+</script>
+
+</body>
+</html>
